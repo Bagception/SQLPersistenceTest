@@ -8,7 +8,9 @@ import de.philipphock.android.sqlpersistencetest.adapter.TodoListAdapter;
 import de.philipphock.android.sqlpersistencetest.data.TodoElement;
 import android.os.Bundle;
 import android.app.ListActivity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.BaseAdapter;
 
 public class TodoOverview extends ListActivity {
@@ -33,6 +35,13 @@ public class TodoOverview extends ListActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Intent createNewIntent = new Intent(this,CreateNewItem.class);
+		startActivity(createNewIntent);
+		return super.onOptionsItemSelected(item);
 	}
 
 }

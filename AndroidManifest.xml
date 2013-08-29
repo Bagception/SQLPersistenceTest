@@ -22,6 +22,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="de.philipphock.android.sqlpersistencetest.activities.CreateNewItem"
+            android:label="@string/title_activity_create_new_item" >
+        </activity>
     </application>
 
 </manifest>
