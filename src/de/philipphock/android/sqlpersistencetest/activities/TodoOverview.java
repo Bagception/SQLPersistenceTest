@@ -12,9 +12,12 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 public class TodoOverview extends ListActivity {
 
+	public static final int REQUEST_CREATENEW=0;
+	
 	private BaseAdapter todoListAdapter;
 	private List<TodoElement> model;
 	@Override
@@ -40,8 +43,17 @@ public class TodoOverview extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Intent createNewIntent = new Intent(this,CreateNewItem.class);
-		startActivity(createNewIntent);
+		startActivityForResult(createNewIntent,REQUEST_CREATENEW);
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == REQUEST_CREATENEW){
+			String todoname = data.getStringExtra(CreateNewItem.RESULT_TODONAME);
+			Toast.makeText(TodoOverview.this, "CREATED: "+todoname,
+			        Toast.LENGTH_SHORT).show();
+		}
+	}
 }

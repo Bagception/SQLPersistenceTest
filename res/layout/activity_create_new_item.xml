@@ -28,6 +28,7 @@
         android:layout_alignRight="@+id/todoname"
         android:layout_below="@+id/todoname"
         android:layout_marginTop="110dp"
+        android:onClick="onOk"
         android:text="ok" />
 
     <TextView
