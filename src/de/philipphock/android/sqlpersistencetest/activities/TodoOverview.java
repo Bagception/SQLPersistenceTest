@@ -10,12 +10,18 @@ import de.philipphock.android.sqlpersistencetest.db.TodoData;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemLongClickListener;
 
-public class TodoOverview extends ListActivity {
+public class TodoOverview extends ListActivity implements OnItemLongClickListener{
 
 	public static final int REQUEST_CREATENEW=0;
 	private TodoData todoData;
@@ -25,18 +31,19 @@ public class TodoOverview extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
-		
+		//getListView()savedInstanceState.//setOnItemLongClickListener(this);
+		todoData = new TodoData(this);
+		registerForContextMenu(getListView());
 	}
 	
+	
+	
 	private void loadData(){
-		todoData = new TodoData(this);
-		todoData.openRead();
 		try {
 			model = todoData.getAllTodoElements();
 		} catch (NoDBEntryFoundException e) {
 			e.printStackTrace();
 		}
-		todoData.close();
 		
 		todoListAdapter = new TodoListAdapter(this,model);
 		
@@ -45,13 +52,39 @@ public class TodoOverview extends ListActivity {
 	}
 	
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		menu.setHeaderTitle("Delete Item");
+		menu.add(0,0,0,"yes");
+		menu.add(0,1,0,"no");
+	
+	}
+	
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		
+		if (item.getItemId()==0){
+			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+			todoData.deleteElement(model.get(info.position));
+			loadData();
+
+		}
+		return super.onContextItemSelected(item);
+
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
+		todoData.openWrite();
 		loadData();
 		
 	}
 	
-
+	
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -65,6 +98,8 @@ public class TodoOverview extends ListActivity {
 		startActivityForResult(createNewIntent,REQUEST_CREATENEW);
 		return super.onOptionsItemSelected(item);
 	}
+	
+	
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -74,5 +109,23 @@ public class TodoOverview extends ListActivity {
 			Toast.makeText(TodoOverview.this, "CREATED: "+todoname,
 			        Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
+			long arg3) {
+		Log.d("delete",model.get(arg2).getText());
+		return false;
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		todoData.close();
+
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
 	}
 }

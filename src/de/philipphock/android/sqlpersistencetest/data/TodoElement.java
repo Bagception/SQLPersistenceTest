@@ -11,4 +11,8 @@ public class TodoElement {
 	public String getText(){
 		return text;
 	}
+	
+	public long getId(){
+		return id;
+	}
 }

@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class TodoData {
 	
@@ -17,15 +18,18 @@ public class TodoData {
 		dbhelper = new DatabaseHelper(context);
 	}
 	public void openRead(){
+		Log.d("db","openRead");
 		db = dbhelper.getReadableDatabase();
 	}
 	
 	
 	
 	public void openWrite(){
+		Log.d("db","openWrite");
 		db = dbhelper.getWritableDatabase();
 	}
 	public void close(){
+		Log.d("db","close");
 		dbhelper.close();
 	}
 	public TodoElement createTodo(String text) throws ErrorCreatingItem{
@@ -68,6 +72,10 @@ public class TodoData {
 		}
 				
 				
+	}
+	
+	public void deleteElement(TodoElement e){
+		db.delete(TodoTable.TABLE_TODO, "_id = "+e.getId(), null);
 	}
 	
 	private TodoElement cursorToElement(Cursor c){
