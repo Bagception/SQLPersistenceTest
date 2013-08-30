@@ -10,7 +10,7 @@ public class TodoTable {
 	  public static final String COLUMN_TEXT = "text";
 	  public static final String[] allColumns = new String[]{COLUMN_ID,COLUMN_TEXT};
 	  
-	private static final String DATABASE_CREATE = "CREATE TABLE"
+	private static final String DATABASE_CREATE = "CREATE TABLE "
 		+ TABLE_TODO
 		+ "("
 		+ COLUMN_ID  + " INTEGER PRIMARY KEY AUTOINCREMENT, "

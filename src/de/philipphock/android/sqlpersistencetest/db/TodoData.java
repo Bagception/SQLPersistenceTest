@@ -23,11 +23,18 @@ public class TodoData {
 	public void close(){
 		dbhelper.close();
 	}
-	public TodoElement createTodo(String text){
+	public TodoElement createTodo(String text) throws ErrorCreatingItem{
 		ContentValues values = new ContentValues();
 		values.put(TodoTable.COLUMN_TEXT, text);
 		long id = db.insert(TodoTable.TABLE_TODO, null, values);
-		
+		TodoElement ret;
+		try {
+			ret = getElement(id);
+		} catch (NoDBEntryFoundException e) {
+			e.printStackTrace();
+			throw new ErrorCreatingItem();
+		}
+		return ret;
 	}
 	
 	private TodoElement getElement(long id) throws NoDBEntryFoundException{

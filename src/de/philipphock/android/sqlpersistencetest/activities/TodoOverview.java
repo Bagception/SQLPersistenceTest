@@ -25,8 +25,8 @@ public class TodoOverview extends ListActivity {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
 		model = new ArrayList<TodoElement>(5);
-		for (int i=0;i<5;i++)
-			model.add(new TodoElement("Element"+i));
+		//for (int i=0;i<5;i++)
+		//	model.add(new TodoElement("Element"+i));
 		
 		todoListAdapter = new TodoListAdapter(this,model);
 		
