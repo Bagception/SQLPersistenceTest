@@ -2,14 +2,19 @@ package de.philipphock.android.sqlpersistencetest.activities;
 
 import java.util.List;
 
+import com.commonsware.cwac.loaderex.SQLiteCursorLoader;
+
 import de.philipphock.android.sqlpersistencetest.R;
 import de.philipphock.android.sqlpersistencetest.adapter.TodoListAdapter;
 import de.philipphock.android.sqlpersistencetest.data.TodoElement;
+import de.philipphock.android.sqlpersistencetest.db.LoaderHelper;
 import de.philipphock.android.sqlpersistencetest.db.NoDBEntryFoundException;
 import de.philipphock.android.sqlpersistencetest.db.TodoData;
+import de.philipphock.android.sqlpersistencetest.db.TodoTable;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -21,40 +26,39 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor>{
 
 	public static final int REQUEST_CREATENEW=0;
-	private TodoData todoData;
-	private BaseAdapter todoListAdapter;
-	private List<TodoElement> model;
+	
+	private LoaderHelper loaderHelper;
+	
+	private SimpleCursorAdapter todoCursorAdapter;
+	
+	private SQLiteCursorLoader loader;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
 		//getListView()savedInstanceState.//setOnItemLongClickListener(this);
-		todoData = new TodoData(this);
+		loaderHelper = new LoaderHelper(this);
 		registerForContextMenu(getListView());
+		fillData();
 	}
 	
-	
-	
-	private void loadData(){
-		try {
-			model = todoData.getAllTodoElements();
-		} catch (NoDBEntryFoundException e) {
-			e.printStackTrace();
-		}
-		
-		todoListAdapter = new TodoListAdapter(this,model);
-		
-		setListAdapter(todoListAdapter);
-		todoListAdapter.notifyDataSetChanged();
-	}
 	
 
 	
+
+	private void fillData() {
+		String[] from = new String[] {TodoTable.COLUMN_TEXT};
+		int[] to = new int[] {android.R.id.text1};
+		getLoaderManager().initLoader(0, null, this);
+		todoCursorAdapter = new SimpleCursorAdapter(this,android.R.layout.simple_list_item_1,null,from,to,0);
+		setListAdapter(todoCursorAdapter);
+	}
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -72,8 +76,8 @@ public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor
 		
 		if (item.getItemId()==0){
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-			todoData.deleteElement(model.get(info.position));
-			loadData();
+			//todoData.deleteElement(model.get(info.position));
+			//loadData();
 
 		}
 		return super.onContextItemSelected(item);
@@ -83,8 +87,8 @@ public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor
 	@Override
 	protected void onResume() {
 		super.onResume();
-		todoData.openWrite();
-		loadData();
+		//todoData.openWrite();
+		//loadData();
 		
 	}
 	
@@ -120,7 +124,7 @@ public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor
 	@Override
 	protected void onPause() {
 		super.onPause();
-		todoData.close();
+		//todoData.close();
 
 	}
 	@Override
@@ -133,24 +137,22 @@ public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor
 	//########### loader callbacks ######################/
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		// TODO Auto-generated method stub
-		return null;
+		loader = loaderHelper.getTodoLoader(this);
+		return loader;
 	}
 
 
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		// TODO Auto-generated method stub
-		
+		todoCursorAdapter.changeCursor(arg1);
 	}
 
 
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		
+		todoCursorAdapter.changeCursor(null);
 	}
 	//########### /loader callbacks ######################/
 }

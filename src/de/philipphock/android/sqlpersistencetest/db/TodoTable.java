@@ -25,4 +25,9 @@ public class TodoTable {
 		database.execSQL("DROP TABLE IF EXISTS " + TABLE_TODO);
 		onCreate(database);
 	}
+	
+	interface QUERIES{
+		String GETALLENTRIES = "SELECT " + COLUMN_ID + ", " + COLUMN_TEXT + " FROM " + TABLE_TODO+";";
+		
+	}
 }
