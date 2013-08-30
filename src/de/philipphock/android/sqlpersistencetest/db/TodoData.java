@@ -1,5 +1,7 @@
 package de.philipphock.android.sqlpersistencetest.db;
 
+import java.util.ArrayList;
+
 import de.philipphock.android.sqlpersistencetest.data.TodoElement;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +15,9 @@ public class TodoData {
 	
 	public TodoData(Context context) {
 		dbhelper = new DatabaseHelper(context);
+	}
+	public void openRead(){
+		db = dbhelper.getReadableDatabase();
 	}
 	
 	
@@ -35,6 +40,22 @@ public class TodoData {
 			throw new ErrorCreatingItem();
 		}
 		return ret;
+	}
+	
+	
+	public ArrayList<TodoElement> getAllTodoElements() throws NoDBEntryFoundException{
+		ArrayList<TodoElement> ret = new ArrayList<TodoElement>();
+		Cursor cursor = db.query(TodoTable.TABLE_TODO,TodoTable.allColumns,null,null,null,null,null,null);
+		if (cursor.moveToFirst()){
+			while(!cursor.isAfterLast()){
+				ret.add(cursorToElement(cursor));
+				cursor.moveToNext();
+			}				
+			return ret;
+		}else{
+			throw new NoDBEntryFoundException();
+		}
+		
 	}
 	
 	private TodoElement getElement(long id) throws NoDBEntryFoundException{

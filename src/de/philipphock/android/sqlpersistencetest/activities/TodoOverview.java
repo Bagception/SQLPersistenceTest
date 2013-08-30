@@ -1,11 +1,12 @@
 package de.philipphock.android.sqlpersistencetest.activities;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.philipphock.android.sqlpersistencetest.R;
 import de.philipphock.android.sqlpersistencetest.adapter.TodoListAdapter;
 import de.philipphock.android.sqlpersistencetest.data.TodoElement;
+import de.philipphock.android.sqlpersistencetest.db.NoDBEntryFoundException;
+import de.philipphock.android.sqlpersistencetest.db.TodoData;
 import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -17,21 +18,39 @@ import android.widget.Toast;
 public class TodoOverview extends ListActivity {
 
 	public static final int REQUEST_CREATENEW=0;
-	
+	private TodoData todoData;
 	private BaseAdapter todoListAdapter;
 	private List<TodoElement> model;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		//setContentView(R.layout.activity_main);
-		model = new ArrayList<TodoElement>(5);
-		//for (int i=0;i<5;i++)
-		//	model.add(new TodoElement("Element"+i));
+		
+	}
+	
+	private void loadData(){
+		todoData = new TodoData(this);
+		todoData.openRead();
+		try {
+			model = todoData.getAllTodoElements();
+		} catch (NoDBEntryFoundException e) {
+			e.printStackTrace();
+		}
+		todoData.close();
 		
 		todoListAdapter = new TodoListAdapter(this,model);
 		
 		setListAdapter(todoListAdapter);
+		todoListAdapter.notifyDataSetChanged();
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		loadData();
+		
+	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
