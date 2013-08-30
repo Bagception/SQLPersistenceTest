@@ -9,7 +9,10 @@ import de.philipphock.android.sqlpersistencetest.db.NoDBEntryFoundException;
 import de.philipphock.android.sqlpersistencetest.db.TodoData;
 import android.os.Bundle;
 import android.app.ListActivity;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -19,9 +22,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemLongClickListener;
 
-public class TodoOverview extends ListActivity implements OnItemLongClickListener{
+public class TodoOverview extends ListActivity implements LoaderCallbacks<Cursor>{
 
 	public static final int REQUEST_CREATENEW=0;
 	private TodoData todoData;
@@ -50,6 +52,9 @@ public class TodoOverview extends ListActivity implements OnItemLongClickListene
 		setListAdapter(todoListAdapter);
 		todoListAdapter.notifyDataSetChanged();
 	}
+	
+
+	
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
@@ -111,13 +116,7 @@ public class TodoOverview extends ListActivity implements OnItemLongClickListene
 		}
 	}
 
-	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-		Log.d("delete",model.get(arg2).getText());
-		return false;
-	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -128,4 +127,30 @@ public class TodoOverview extends ListActivity implements OnItemLongClickListene
 	protected void onStop() {
 		super.onStop();
 	}
+
+
+
+	//########### loader callbacks ######################/
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	//########### /loader callbacks ######################/
 }
