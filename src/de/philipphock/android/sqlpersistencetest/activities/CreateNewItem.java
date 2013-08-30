@@ -3,6 +3,7 @@ package de.philipphock.android.sqlpersistencetest.activities;
 import de.philipphock.android.sqlpersistencetest.R;
 import de.philipphock.android.sqlpersistencetest.R.layout;
 import de.philipphock.android.sqlpersistencetest.R.menu;
+import de.philipphock.android.sqlpersistencetest.data.TodoElement;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -27,6 +28,8 @@ public class CreateNewItem extends Activity {
 	
 	public void onOk(View v) {
 		String text = ((TextView)findViewById(R.id.todoname)).getText().toString();
+		TodoElement newEntry = new TodoElement(text);
+		
 		Intent returnIntent = new Intent();
 		returnIntent.putExtra(RESULT_TODONAME,text);
 		setResult(RESULT_OK,returnIntent);     
